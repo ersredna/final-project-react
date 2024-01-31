@@ -1,5 +1,17 @@
 import { useState } from 'react'
+import { NavBar } from './Components/NavBar'
 
 export default function App() {
-  return <h1>Hi test</h1>;
+  const [user, setUser] = useState('')
+
+  return (
+    <>
+      <NavBar user={user} setUser={setUser}/>
+      {/* <CharacterList />
+      <CharacterAddForm />
+      <CharacterDeleteForm />
+      <CharacterConnectionAddForm />
+      <CharacterConnectionDeleteForm /> */}
+    </>
+  );
 }
