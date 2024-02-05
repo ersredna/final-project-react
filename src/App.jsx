@@ -3,11 +3,12 @@ import { NavBar } from './Components/NavBar'
 import { TestComponent } from './Components/TestComponent'
 
 export default function App() {
-  const [user, setUser] = useState('')
+  const [user, setUser] = useState(localStorage.username || '')
+  const [unameInput, setUnameInput] = useState('')
 
   return (
     <>
-      <NavBar user={user} setUser={setUser}/>
+      <NavBar user={user} setUser={setUser} unameInput={unameInput} setUnameInput={setUnameInput}/>
       <div>
         <TestComponent />
         {/* <CharacterList />

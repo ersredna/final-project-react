@@ -1,6 +1,6 @@
 import './NavBar.css'
 
-export function NavBar({ user, setUser }) {
+export function NavBar({ user, setUser, unameInput, setUnameInput }) {
     let userLogged
     let btnMessage = 'Login'
     if (user) {
@@ -11,7 +11,17 @@ export function NavBar({ user, setUser }) {
         userLogged = ''
         btnMessage = 'Login'
     }
-    console.log(user);
+    console.log(user)
+    function handleChange(e) {
+        setUnameInput(e.target.value)
+    }
+
+    function handleSubmit(e) {
+        e.preventDefault()
+        userLogged ? setUser('') : setUser(unameInput)
+        localStorage.username = unameInput
+    }
+
     return (
 
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -19,12 +29,12 @@ export function NavBar({ user, setUser }) {
             <div>
                 {!userLogged && <>
                     <form>
-                        <input id="username" type="text"></input>
+                        <input id="username" onChange={handleChange} type="text" value={unameInput}></input>
                         <input id="password" type="password"></input>
                     </form>
                     </>}
                 {userLogged}
-                <button className="btn nav-item" onClick={userLogged ? (() => (setUser(''))) : (() => setUser('anders'))}>{btnMessage}</button>
+                <button className="btn nav-item" onClick={handleSubmit}>{btnMessage}</button>
             </div>
         </nav>
     )
