@@ -1,4 +1,8 @@
-.logged-message {
+.loginout {
     display: inline-block;
-    margin-right: 10px;
+    margin-left: auto;
+}
+
+.logged-msg {
+    margin-right: 12px;
 }

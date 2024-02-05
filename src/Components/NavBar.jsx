@@ -4,37 +4,34 @@ export function NavBar({ user, setUser, unameInput, setUnameInput }) {
     let userLogged
     let btnMessage = 'Login'
     if (user) {
-        userLogged = <div className="logged-message nav-item">Logged in as <strong>{user}</strong></div>
+        userLogged = <p className="d-inline-block logged-msg nav-item">Logged in as <strong>{user}</strong></p>
         btnMessage = 'Logout'
     }
     else {
         userLogged = ''
         btnMessage = 'Login'
     }
-    console.log(user)
+
     function handleChange(e) {
         setUnameInput(e.target.value)
     }
 
     function handleSubmit(e) {
         e.preventDefault()
-        userLogged ? setUser('') : setUser(unameInput)
+        user ? setUser('') : setUser(unameInput)
         localStorage.username = unameInput
     }
 
     return (
-
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <a className="navbar-brand" href="#">Navbar</a>
-            <div>
+            <div className="loginout nav-item">
                 {!userLogged && <>
-                    <form>
-                        <input id="username" onChange={handleChange} type="text" value={unameInput}></input>
-                        <input id="password" type="password"></input>
-                    </form>
-                    </>}
+                    <input className="d-inline-block" id="username" onChange={handleChange} type="text" value={unameInput}></input>
+                    <input className="d-inline-block" id="password" type="password"></input>
+                </>}
                 {userLogged}
-                <button className="btn nav-item" onClick={handleSubmit}>{btnMessage}</button>
+                <button className="btn d-inline-block" onClick={handleSubmit}>{btnMessage}</button>
             </div>
         </nav>
     )
