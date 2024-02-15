@@ -1,6 +1,6 @@
 import './NavBar.css'
 
-export function NavBar({ user, setUser, unameInput, setUnameInput }) {
+export function NavBar({ user, setUser, unameInput }) {
     let userLogged
     let btnMessage = 'Login'
     if (user) {
@@ -12,10 +12,6 @@ export function NavBar({ user, setUser, unameInput, setUnameInput }) {
         btnMessage = 'Login'
     }
 
-    function handleChange(e) {
-        setUnameInput(e.target.value)
-    }
-
     function handleSubmit(e) {
         e.preventDefault()
         user ? setUser('') : setUser(unameInput)
@@ -24,15 +20,15 @@ export function NavBar({ user, setUser, unameInput, setUnameInput }) {
 
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <a className="navbar-brand" href="#">Navbar</a>
-            <div className="loginout nav-item">
+            <a className="navbar-brand" href="#">One Piece Connections</a>
+            <form className="login-logout nav-item" id="login-form" onSubmit={handleSubmit}>
                 {!userLogged && <>
-                    <input className="d-inline-block" id="username" onChange={handleChange} type="text" value={unameInput}></input>
+                    <input className="d-inline-block" id="username" type="text" value={unameInput}></input>
                     <input className="d-inline-block" id="password" type="password"></input>
                 </>}
                 {userLogged}
-                <button className="btn d-inline-block" onClick={handleSubmit}>{btnMessage}</button>
-            </div>
+                <button className="btn d-inline-block">{btnMessage}</button>
+            </form>
         </nav>
     )
 }
