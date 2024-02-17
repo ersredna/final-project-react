@@ -24,6 +24,3 @@ CREATE TABLE users (
 CREATE TABLE test (
     name VARCHAR(255) PRIMARY KEY NOT NULL
 );
-
--- @block
-INSERT INTO test VALUES ('anders');
