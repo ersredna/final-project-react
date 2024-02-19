@@ -1,6 +1,6 @@
 import './NavBar.css'
 
-export function NavBar({ user, setUser, unameInput }) {
+export default function NavBar({ user, setUser, unameInput }) {
     let userLogged
     let btnMessage = 'Login'
     if (user) {
@@ -21,13 +21,13 @@ export function NavBar({ user, setUser, unameInput }) {
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <a className="navbar-brand" href="#">One Piece Connections</a>
-            <form className="login-logout nav-item" id="login-form" onSubmit={handleSubmit}>
-                {!userLogged && <>
-                    <input className="d-inline-block" id="username" type="text" value={unameInput}></input>
-                    <input className="d-inline-block" id="password" type="password"></input>
-                </>}
+            <form className="login-form nav-item" id="login-form" onSubmit={handleSubmit}>
+                {!userLogged && <div className="login-input-wrapper">
+                    <input className="d-inline-block form-control login-input" id="username" placeholder="Username" type="text" value={unameInput}></input>
+                    <input className="d-inline-block form-control login-input" id="password" placeholder="Password" type="password"></input>
+                </div>}
                 {userLogged}
-                <button className="btn d-inline-block">{btnMessage}</button>
+                <button className="btn d-inline-block login-btn">{btnMessage}</button>
             </form>
         </nav>
     )

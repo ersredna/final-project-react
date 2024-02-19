@@ -1,0 +1,54 @@
+.content-div {
+    padding: 5px;
+    margin: 0 auto 0 auto;
+    display: flex;
+    justify-content: center;
+}
+
+.character-div {
+    width: 250px;
+    height: calc(100vh - 70px);
+    margin: 0 5px 0 0;
+}
+
+.character-form-div {
+    margin: 0 0 5px 0;
+}
+
+.character-table {
+    width: 100%;
+}
+
+.character-table * {
+    text-align: center;
+}
+
+.table-head {
+    height: 51px;
+    border-bottom: 0px;
+    margin-bottom: 0;
+}
+
+.table-wrapper-scroll-y {
+    height: calc(100% - 141px);
+    margin: 0;
+    overflow-y: auto;
+}
+
+.character-input {
+    height: 40px;
+    width: 100%;
+    margin: 0 0 5px 0;
+}
+
+.character-btn-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.character-btn {
+    height: 40px;
+    width: calc(50% - 2.5px);
+    margin: 0 0 0 0;
+    text-align: center;
+}
