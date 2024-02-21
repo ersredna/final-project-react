@@ -1,4 +1,4 @@
-export default function CharacterAddForm({ charInput, onChange, addCharacter, deleteCharacter }) {
+export default function CharactersAlterForm({ charInput, onChange, addCharacter, deleteCharacter }) {
     return (
         <div className="form-group character-form-div">
             <input className="form-control character-input" id="character-input" onChange={onChange} placeholder="Character" value={charInput}></input>

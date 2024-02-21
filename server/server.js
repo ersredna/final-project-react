@@ -56,6 +56,20 @@ app.post('/delete-character', jsonParser, async (req, res) => {
 })
 
 
+app.post('/add-connection', jsonParser, async (req, res) => {
+    const { charNameS, charNameT } = req.body
+
+    const response = await addConnection(charNameS, charNameT)
+
+    if (response.error) {
+        res.status(200).json(response.error)
+    }
+    else {
+        res.status(201).json(response.content)
+    }
+})
+
+
 app.listen(PORT, () => {
     console.log(`server is running on port ${PORT}`)
 })

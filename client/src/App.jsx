@@ -1,8 +1,8 @@
 import React, { setState } from 'react'
 import NavBar from './Components/NavBar'
 import CharacterList from './Components/CharacterList'
-import CharacterAddForm from './Components/CharacterAddForm'
-import CharacterConnectionAddForm from './Components/CharacterConnectionAddForm'
+import CharactersAlterForm from './Components/CharactersAlterForm'
+import CharacterConnectionsAlterForm from './Components/CharacterConnectionsAlterForm'
 
 
 import './App.css'
@@ -73,7 +73,7 @@ export default class App extends React.Component {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ "name": name })
+      body: JSON.stringify({ name })
     })
     .then(res => res.json())
     .then(() => this.getCharacters())
@@ -96,7 +96,7 @@ export default class App extends React.Component {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ "name": name })
+      body: JSON.stringify({ name })
     })
     .then(res => res.json())
     .then(() => this.getCharacters())
@@ -106,8 +106,25 @@ export default class App extends React.Component {
   }
 
 
-  addConnection() {
-    return
+  addConnection = () => {
+    const charNameS = this.state.connInputS
+    const charNameT = this.state.connInputT
+
+    if (!charNameS) alert("Must provide source name") 
+    if (!charNameT) alert("Must provide target name")
+    if (!charNameS || !charNameT) return
+
+    fetch('http://localhost:5000/add-connection', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ charNameS, charNameT })
+    })
+    .then(res => res.json())
+    .then(data => console.log(data))
+    .catch(err => console.error(err))
   }
 
 
@@ -122,11 +139,11 @@ export default class App extends React.Component {
         <NavBar user={this.state.user} loginSubmit={this.state.loginSubmit} />
         <div className="content-div">
           <div className="character-div">
-            <CharacterAddForm charInput={this.state.charInput} onChange={this.onChange} addCharacter={this.addCharacter} deleteCharacter={this.deleteCharacter} />
+            <CharactersAlterForm charInput={this.state.charInput} onChange={this.onChange} addCharacter={this.addCharacter} deleteCharacter={this.deleteCharacter} />
             <CharacterList characters={this.state.characters} />
           </div>
           <div className="character-div">
-            <CharacterConnectionAddForm connInputS={this.state.connInputS} connInputT={this.state.connInputT} onChange={this.onChange} />
+            <CharacterConnectionsAlterForm connInputS={this.state.connInputS} connInputT={this.state.connInputT} onChange={this.onChange} addConnection={this.addConnection} />
           </div>
         </div>
       </>

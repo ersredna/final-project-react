@@ -20,9 +20,7 @@ export async function getUser(username) {
 export async function getCharacters() {
     const [ characters ] = await pool.query("SELECT * FROM characters")
 
-    if (!characters.length) {
-        return { error: 'No characters in database' }
-    }
+    if (!characters.length) return { error: 'No characters in database' }
 
     return { status: 'success', content: characters }
 }
@@ -31,15 +29,13 @@ export async function getCharacters() {
 export async function addCharacter(name) {
     name = name.toUpperCase()
 
-    const [characters] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
+    const [ rows ] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
 
-    if (characters.length) {
-        return { error: 'Character already in database' }
-    }
+    if (rows.length) return { error: 'Character already in database' }
 
     await pool.query("INSERT INTO characters (name) VALUES (?)", name)
-    const [ rows ] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
-    return { status: 'success', content: rows[0] }
+    const [ character ] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
+    return { status: 'success', content: character[0] }
 }
 
 
@@ -51,19 +47,34 @@ export async function addCharactersBulk(characters) {
 export async function deleteCharacter(name) {
     name = name.toUpperCase()
 
-    const [ characters ] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
+    const [ rows ] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
 
-    if (!characters.length) {
-        return { error: 'Character not in database' }
-    }
+    if (!rows.length) return { error: 'Character not in database' }
 
     await pool.query("DELETE FROM characters WHERE name = ?", name)
-    return { status: 'success', content: 'deleted' }
+    return { status: 'success', content: rows[0] }
 }
 
 
-export async function addConnection(id1, id2) {
-    return
+export async function addConnection(charNameS, charNameT) {
+    charNameS = charNameS.toUpperCase()
+    charNameT = charNameT.toUpperCase()
+    
+    const [ source ] = await pool.query("SELECT id FROM characters WHERE name = ?", charNameS)
+    const [ target ] = await pool.query("SELECT id FROM characters WHERE name = ?", charNameT)
+
+    if (!source.length && !target.length) return { error: `${charNameS} nor ${charNameT} are in database` }
+    if (!source.length) return { error: `${charNameS} not in database` }
+    if (!target.length) return { error: `${charNameT} not in database` }
+
+    const [ rows ] = await pool.query("SELECT * FROM connections WHERE char_id_1 = ? AND char_id_2 = ?", [source[0].id, target[0].id])
+
+    if (rows.length) return { error: 'Connection already exists' }
+
+    await pool.query("INSERT INTO connections (char_id_1, char_id_2) VALUES (?, ?)", [source[0].id, target[0].id])
+    const [ connection ] = await pool.query("SELECT * FROM connections WHERE char_id_1 = ? AND char_id_2 = ?", [source[0].id, target[0].id])
+
+    return { status: 'success', content: connection[0] }
 }
 
 
