@@ -29,13 +29,13 @@ export async function getCharacters() {
 export async function addCharacter(name) {
     name = name.toUpperCase()
 
-    const [ rows ] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
+    const [[ rows ]] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
 
-    if (rows.length) return { error: 'Character already in database' }
+    if (rows) return { error: 'Character already in database' }
 
     await pool.query("INSERT INTO characters (name) VALUES (?)", name)
-    const [ character ] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
-    return { status: 'success', content: character[0] }
+    const [[ character ]] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
+    return { status: 'success', content: character }
 }
 
 
@@ -47,12 +47,26 @@ export async function addCharactersBulk(characters) {
 export async function deleteCharacter(name) {
     name = name.toUpperCase()
 
-    const [ rows ] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
+    const [[ character ]] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
 
-    if (!rows.length) return { error: 'Character not in database' }
+    console.log(character)
+
+    if (!character) return { error: 'Character not in database' }
 
     await pool.query("DELETE FROM characters WHERE name = ?", name)
-    return { status: 'success', content: rows[0] }
+    await pool.query("DELETE FROM connections WHERE char_id_1 = ? OR char_id_2 = ?", [character.id, character.id])
+    return { status: 'success', content: character }
+}
+
+
+export async function getConnections() {
+    const [ connections ] = await pool.query("SELECT char1.name, char2.name FROM connections AS conn JOIN characters AS char1 ON conn.char_id_1 = char1.id JOIN characters AS char2 ON conn.char_id_2 = char2.id")
+    
+    if (!connections.length) return { error: 'No connections in database' }
+
+    console.log(connections) // FIXME: only returning target
+    
+    return { status: 'success', content: connections }
 }
 
 
@@ -60,27 +74,42 @@ export async function addConnection(charNameS, charNameT) {
     charNameS = charNameS.toUpperCase()
     charNameT = charNameT.toUpperCase()
     
-    const [ source ] = await pool.query("SELECT id FROM characters WHERE name = ?", charNameS)
-    const [ target ] = await pool.query("SELECT id FROM characters WHERE name = ?", charNameT)
+    const [[ source ]] = await pool.query("SELECT id FROM characters WHERE name = ?", charNameS)
+    const [[ target ]] = await pool.query("SELECT id FROM characters WHERE name = ?", charNameT)
 
-    if (!source.length && !target.length) return { error: `${charNameS} nor ${charNameT} are in database` }
-    if (!source.length) return { error: `${charNameS} not in database` }
-    if (!target.length) return { error: `${charNameT} not in database` }
+    if (!source && !target) return { error: `${charNameS} nor ${charNameT} are in database` }
+    if (!source) return { error: `${charNameS} not in database` }
+    if (!target) return { error: `${charNameT} not in database` }
 
-    const [ rows ] = await pool.query("SELECT * FROM connections WHERE char_id_1 = ? AND char_id_2 = ?", [source[0].id, target[0].id])
+    const [[ rows ]] = await pool.query("SELECT * FROM connections WHERE char_id_1 = ? AND char_id_2 = ?", [source.id, target.id])
 
-    if (rows.length) return { error: 'Connection already exists' }
+    if (rows) return { error: 'Connection already exists' }
 
-    await pool.query("INSERT INTO connections (char_id_1, char_id_2) VALUES (?, ?)", [source[0].id, target[0].id])
-    const [ connection ] = await pool.query("SELECT * FROM connections WHERE char_id_1 = ? AND char_id_2 = ?", [source[0].id, target[0].id])
+    await pool.query("INSERT INTO connections (char_id_1, char_id_2) VALUES (?, ?)", [source.id, target.id])
+    const [[ connection ]] = await pool.query("SELECT * FROM connections WHERE char_id_1 = ? AND char_id_2 = ?", [source.id, target.id])
 
-    return { status: 'success', content: connection[0] }
+    return { status: 'success', content: connection }
 }
 
 
-export async function getConnections() {
-    const [rows] = await pool.query("SELECT c1, c2 FROM connections AS conn JOIN characters AS char1 ON conn.char_id_1 = char1.id JOIN characters AS char2 ON conn.char_id_2 = char2.id")
-    return rows
+export async function deleteConnection(charNameS, charNameT) {
+    charNameS = charNameS.toUpperCase()
+    charNameT = charNameT.toUpperCase()
+    
+    const [[ source ]] = await pool.query("SELECT id FROM characters WHERE name = ?", charNameS)
+    const [[ target ]] = await pool.query("SELECT id FROM characters WHERE name = ?", charNameT)
+
+    if (!source && !target) return { error: `${charNameS} nor ${charNameT} are in database` }
+    if (!source) return { error: `${charNameS} not in database` }
+    if (!target) return { error: `${charNameT} not in database` }
+
+    const [[ connection ]] = await pool.query("SELECT * FROM connections WHERE char_id_1 = ? AND char_id_2 = ?", [source.id, target.id])
+
+    if (!connection) return { error: 'Connection doesn\'t exist' }
+
+    await pool.query("DELETE FROM connections WHERE char_id_1 = ? AND char_id_2 = ?", [source.id, target.id])
+
+    return { status: 'success', content: connection }
 }
 
 

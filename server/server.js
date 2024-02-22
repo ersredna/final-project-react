@@ -1,7 +1,7 @@
 import express, { response } from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-import { getTest, getUser, getCharacters, addCharacter, addCharactersBulk, deleteCharacter, addConnection, getConnections, clearTable } from './database.js'
+import { getTest, getUser, getCharacters, addCharacter, addCharactersBulk, deleteCharacter, getConnections, addConnection, deleteConnection, clearTable } from './database.js'
 
 const app = express()
 const PORT = 5000
@@ -56,10 +56,36 @@ app.post('/delete-character', jsonParser, async (req, res) => {
 })
 
 
+app.get('/connections', async (req, res) => {
+    const response = await getConnections()
+
+    if (response.error) {
+        res.status(200).json(response.error)
+    }
+    else {
+        res.status(200).json(response.content)
+    }
+})
+
+
 app.post('/add-connection', jsonParser, async (req, res) => {
     const { charNameS, charNameT } = req.body
 
     const response = await addConnection(charNameS, charNameT)
+
+    if (response.error) {
+        res.status(200).json(response.error)
+    }
+    else {
+        res.status(201).json(response.content)
+    }
+})
+
+
+app.post('/delete-connection', jsonParser, async (req, res) => {
+    const { charNameS, charNameT } = req.body
+
+    const response = await deleteConnection(charNameS, charNameT)
 
     if (response.error) {
         res.status(200).json(response.error)

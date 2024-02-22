@@ -16,7 +16,8 @@ export default class App extends React.Component {
       charInput: '',
       connInputS: '',
       connInputT: '',
-      characters: []
+      characters: [],
+      connections: []
     }
   }
 
@@ -76,6 +77,7 @@ export default class App extends React.Component {
       body: JSON.stringify({ name })
     })
     .then(res => res.json())
+    .then(data => console.log(data))
     .then(() => this.getCharacters())
     .catch(err => console.error(err))
 
@@ -106,6 +108,19 @@ export default class App extends React.Component {
   }
 
 
+  async getConnections() {
+    const connections = await fetch('http://localhost:5000/connections')
+    .then(res => {
+      return res.json()
+    })
+    .catch(err => console.error(err))
+
+    console.log(connections) // FIXME: database only gets target of connections
+
+    // this.setState({ connections })
+  }
+
+
   addConnection = () => {
     const charNameS = this.state.connInputS
     const charNameT = this.state.connInputT
@@ -128,8 +143,25 @@ export default class App extends React.Component {
   }
 
 
-  deleteConnection() {
-    return
+  deleteConnection = () => {
+    const charNameS = this.state.connInputS
+    const charNameT = this.state.connInputT
+
+    if (!charNameS) alert("Must provide source name") 
+    if (!charNameT) alert("Must provide target name")
+    if (!charNameS || !charNameT) return
+
+    fetch('http://localhost:5000/delete-connection', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ charNameS, charNameT })
+    })
+    .then(res => res.json())
+    .then(data => console.log(data))
+    .catch(err => console.error(err))
   }
 
 
@@ -143,8 +175,9 @@ export default class App extends React.Component {
             <CharacterList characters={this.state.characters} />
           </div>
           <div className="character-div">
-            <CharacterConnectionsAlterForm connInputS={this.state.connInputS} connInputT={this.state.connInputT} onChange={this.onChange} addConnection={this.addConnection} />
+            <CharacterConnectionsAlterForm connInputS={this.state.connInputS} connInputT={this.state.connInputT} onChange={this.onChange} addConnection={this.addConnection} deleteConnection={this.deleteConnection} />
           </div>
+          <button className="btn" onClick={this.getConnections}>test</button>
         </div>
       </>
     );
