@@ -5,7 +5,7 @@
     justify-content: center;
 }
 
-.character-div {
+.form-div {
     width: 250px;
     height: calc(100vh - 70px);
     margin: 0 5px 0 0;
@@ -15,11 +15,11 @@
     margin: 0 0 5px 0;
 }
 
-.character-table {
+.characters-table {
     width: 100%;
 }
 
-.character-table * {
+.characters-table * {
     text-align: center;
 }
 
@@ -29,26 +29,40 @@
     margin-bottom: 0;
 }
 
-.table-wrapper-scroll-y {
+.characters-table-wrapper-scroll-y {
     height: calc(100% - 141px);
     margin: 0;
     overflow-y: auto;
 }
 
-.character-input {
+.form-input {
     height: 40px;
     width: 100%;
     margin: 0 0 5px 0;
 }
 
-.character-btn-wrapper {
+.form-btn-wrapper {
     display: flex;
     justify-content: space-between;
 }
 
-.character-btn {
+.form-btn {
     height: 40px;
     width: calc(50% - 2.5px);
     margin: 0 0 0 0;
     text-align: center;
+}
+
+.connections-table {
+    width: 100%;
+}
+
+.connections-table * {
+    text-align: center;
+}
+
+.connections-table-wrapper-scroll-y {
+    height: calc(100% - 186px);
+    margin: 0;
+    overflow-y: auto;
 }

@@ -1,15 +1,15 @@
-export default function CharacterList({ characters }) {
+export default function CharactersList({ characters }) {
     return (
         <>
-            <table className="table character-table table-head">
+            <table className="table characters-table table-head">
                 <thead>
                     <tr>
                         <th>Characters</th>
                     </tr>
                 </thead>
             </table>
-            <div className="table-wrapper-scroll-y">
-                <table className="table character-table">
+            <div className="characters-table-wrapper-scroll-y">
+                <table className="table characters-table">
                     <tbody>
                         {characters.map(character => {
                             return (

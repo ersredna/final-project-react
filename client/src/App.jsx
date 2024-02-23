@@ -1,9 +1,10 @@
 import React, { setState } from 'react'
 import NavBar from './Components/NavBar'
-import CharacterList from './Components/CharacterList'
+import CharactersList from './Components/CharactersList'
 import CharactersAlterForm from './Components/CharactersAlterForm'
 import CharacterConnectionsAlterForm from './Components/CharacterConnectionsAlterForm'
-
+import ConnectionsList from './Components/ConnectionsList'
+import CsvInputForm from './Components/CsvInputForm'
 
 import './App.css'
 
@@ -24,6 +25,7 @@ export default class App extends React.Component {
 
   componentDidMount() {
     this.getCharacters()
+    this.getConnections()
   }
 
 
@@ -51,13 +53,13 @@ export default class App extends React.Component {
 
 
   async getCharacters() {
-    const characters = await fetch('http://localhost:5000/characters')
+    const response = await fetch('http://localhost:5000/characters')
     .then(res => {
       return res.json()
     })
     .catch(err => console.error(err))
 
-    this.setState({ characters })
+    this.setState({ characters: response.content })
   }
 
 
@@ -77,8 +79,11 @@ export default class App extends React.Component {
       body: JSON.stringify({ name })
     })
     .then(res => res.json())
-    .then(data => console.log(data))
+    .then(data => {
+      if (data.error) alert(data.error)
+    })
     .then(() => this.getCharacters())
+    .then(() => this.getConnections())
     .catch(err => console.error(err))
 
     this.setState({ charInput: '' })
@@ -101,7 +106,11 @@ export default class App extends React.Component {
       body: JSON.stringify({ name })
     })
     .then(res => res.json())
+    .then(data => {
+      if (data.error) alert(data.error)
+    })
     .then(() => this.getCharacters())
+    .then(() => this.getConnections())
     .catch(err => console.error(err))
 
     this.setState({ charInput: '' })
@@ -109,15 +118,13 @@ export default class App extends React.Component {
 
 
   async getConnections() {
-    const connections = await fetch('http://localhost:5000/connections')
+    const response = await fetch('http://localhost:5000/connections')
     .then(res => {
       return res.json()
     })
     .catch(err => console.error(err))
 
-    console.log(connections) // FIXME: database only gets target of connections
-
-    // this.setState({ connections })
+    this.setState({ connections: response.content })
   }
 
 
@@ -138,8 +145,13 @@ export default class App extends React.Component {
       body: JSON.stringify({ charNameS, charNameT })
     })
     .then(res => res.json())
-    .then(data => console.log(data))
+    .then(data => {
+      if (data.error) alert(data.error)
+    })
+    .then(() => this.getConnections())
     .catch(err => console.error(err))
+
+    this.setState({ connInputT: '' })
   }
 
 
@@ -160,8 +172,13 @@ export default class App extends React.Component {
       body: JSON.stringify({ charNameS, charNameT })
     })
     .then(res => res.json())
-    .then(data => console.log(data))
+    .then(data => {
+      if (data.error) alert(data.error)
+    })
+    .then(() => this.getConnections())
     .catch(err => console.error(err))
+
+    this.setState({ connInputT: '' })
   }
 
 
@@ -170,14 +187,18 @@ export default class App extends React.Component {
       <>
         <NavBar user={this.state.user} loginSubmit={this.state.loginSubmit} />
         <div className="content-div">
-          <div className="character-div">
+          <div className="form-div">
             <CharactersAlterForm charInput={this.state.charInput} onChange={this.onChange} addCharacter={this.addCharacter} deleteCharacter={this.deleteCharacter} />
-            <CharacterList characters={this.state.characters} />
+            <CharactersList characters={this.state.characters} />
           </div>
-          <div className="character-div">
+          <div className="form-div">
             <CharacterConnectionsAlterForm connInputS={this.state.connInputS} connInputT={this.state.connInputT} onChange={this.onChange} addConnection={this.addConnection} deleteConnection={this.deleteConnection} />
+            <ConnectionsList connInputS={this.state.connInputS} connInputT={this.state.connInputT} connections={this.state.connections} />
           </div>
-          <button className="btn" onClick={this.getConnections}>test</button>
+          <div className="form-div">
+            <CsvInputForm />
+          </div>
+          <button className="btn">test</button>
         </div>
       </>
     );
