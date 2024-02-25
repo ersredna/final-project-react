@@ -1,4 +1,6 @@
 import mysql from 'mysql2'
+import bcrypt from 'bcrypt'
+const SALT_ROUNDS = 10
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -15,6 +17,23 @@ export async function getUser(username) {
     const [ rows ] = await pool.query("SELECT * FROM users WHERE username = ?", username)
 
     return rows[0]
+}
+
+
+export async function registerUser(username, password, adminCode) {                          // currently working here
+    const usernameUpper = username.toUpperCase()
+    const [[ existingUser ]] = await pool.query("SELECT * FROM users WHERE username = ?", usernameUpper)
+
+    if (existingUser) return { status: 200, error: `"${username}" already in use`}
+
+    const hashedPassword = bcrypt.hash(password, SALT_ROUNDS)
+    const isAdmin = adminCode = process.env.ADMIN_HASH ? 1 : 0
+
+    console.log(isAdmin)
+
+    // await pool.query("INSERT INTO users (username, hash, is_admin) VALUES (?, ?, ?)", [usernameUpper, hashedPassword, isAdmin])
+
+    return { status: 201, content: 'success' } // maybe update content
 }
 
 

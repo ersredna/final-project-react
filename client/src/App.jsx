@@ -52,6 +52,11 @@ export default class App extends React.Component {
   }
 
 
+  registerUser = (username, password, adminCode) => {
+    // dont know if putting password in variable is ok. probably just go for it
+  }
+
+
   async getCharacters() {
     const response = await fetch('http://localhost:5000/characters')
     .then(res => {
@@ -132,8 +137,11 @@ export default class App extends React.Component {
     const charNameS = this.state.connInputS
     const charNameT = this.state.connInputT
 
-    if (!charNameS) alert("Must provide source name") 
-    if (!charNameT) alert("Must provide target name")
+    if (!charNameS && !charNameT) alert("Must provide target and source names")
+    else {
+      if (!charNameS) alert("Must provide source name") 
+      if (!charNameT) alert("Must provide target name")
+    }
     if (!charNameS || !charNameT) return
 
     fetch('http://localhost:5000/add-connection', {
@@ -159,8 +167,11 @@ export default class App extends React.Component {
     const charNameS = this.state.connInputS
     const charNameT = this.state.connInputT
 
-    if (!charNameS) alert("Must provide source name") 
-    if (!charNameT) alert("Must provide target name")
+    if (!charNameS && !charNameT) alert("Must provide target and source names")
+    else {
+      if (!charNameS) alert("Must provide source name") 
+      if (!charNameT) alert("Must provide target name")
+    }
     if (!charNameS || !charNameT) return
 
     fetch('http://localhost:5000/delete-connection', {
@@ -183,23 +194,43 @@ export default class App extends React.Component {
 
 
   render() {
+    let page = <></>
+    if (false/* if admin */) {
+      page = 
+      <div className="content-div">
+        <div className="form-div">
+          <CharactersAlterForm charInput={this.state.charInput} onChange={this.onChange} addCharacter={this.addCharacter} deleteCharacter={this.deleteCharacter} />
+          <CharactersList characters={this.state.characters} />
+        </div>
+        <div className="form-div">
+          <CharacterConnectionsAlterForm connInputS={this.state.connInputS} connInputT={this.state.connInputT} onChange={this.onChange} addConnection={this.addConnection} deleteConnection={this.deleteConnection} />
+          <ConnectionsList connInputS={this.state.connInputS} connInputT={this.state.connInputT} connections={this.state.connections} />
+        </div>
+        <div className="form-div">
+          <CsvInputForm />
+        </div>
+        <button className="btn">tests</button>
+      </div>
+    }
+    else if (!this.state.user/* if user, no admin */) {
+      page =
+      <div>
+        Hello there.
+      </div>
+    }
+    // if no user
+    else {
+      page =
+      <div>
+        test
+      </div>
+    }
+
+
     return (
       <>
         <NavBar user={this.state.user} loginSubmit={this.state.loginSubmit} />
-        <div className="content-div">
-          <div className="form-div">
-            <CharactersAlterForm charInput={this.state.charInput} onChange={this.onChange} addCharacter={this.addCharacter} deleteCharacter={this.deleteCharacter} />
-            <CharactersList characters={this.state.characters} />
-          </div>
-          <div className="form-div">
-            <CharacterConnectionsAlterForm connInputS={this.state.connInputS} connInputT={this.state.connInputT} onChange={this.onChange} addConnection={this.addConnection} deleteConnection={this.deleteConnection} />
-            <ConnectionsList connInputS={this.state.connInputS} connInputT={this.state.connInputT} connections={this.state.connections} />
-          </div>
-          <div className="form-div">
-            <CsvInputForm />
-          </div>
-          <button className="btn">test</button>
-        </div>
+        {page}
       </>
     );
   }
