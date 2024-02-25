@@ -16,7 +16,7 @@ app.use(cors({
 app.post('/register', jsonParser, async (req, res) => {                     // currently working here
     const { username, password, adminCode } = req.body
 
-    const response = await registerUser(username, password)
+    const response = await registerUser(username, password, adminCode)
 
     res.status(response.status).json(response)
 })

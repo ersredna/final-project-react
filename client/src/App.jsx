@@ -52,8 +52,28 @@ export default class App extends React.Component {
   }
 
 
-  registerUser = (username, password, adminCode) => {
+  registerUser = (username, password, adminCode) => {               // currently working here
     // dont know if putting password in variable is ok. probably just go for it
+    if (!username && !password) alert("Must provide username and password")
+    else {
+      if (!username) alert("Must provide username") 
+      if (!password) alert("Must provide password")
+    }
+    if (!username || !password) return
+
+    fetch('http://localhost:5000/register', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username, password, adminCode })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) alert(data.error)
+    })
+    .catch(err => console.error(err))
   }
 
 

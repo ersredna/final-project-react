@@ -24,14 +24,14 @@ export async function registerUser(username, password, adminCode) {             
     const usernameUpper = username.toUpperCase()
     const [[ existingUser ]] = await pool.query("SELECT * FROM users WHERE username = ?", usernameUpper)
 
-    if (existingUser) return { status: 200, error: `"${username}" already in use`}
+    if (existingUser) return { status: 200, error: `Username "${username}" already in use`}
 
-    const hashedPassword = bcrypt.hash(password, SALT_ROUNDS)
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
     const isAdmin = adminCode = process.env.ADMIN_HASH ? 1 : 0
 
-    console.log(isAdmin)
+    console.log(usernameUpper, hashedPassword, isAdmin)
 
-    // await pool.query("INSERT INTO users (username, hash, is_admin) VALUES (?, ?, ?)", [usernameUpper, hashedPassword, isAdmin])
+    await pool.query("INSERT INTO users (username, hash, is_admin) VALUES (?, ?, ?)", [usernameUpper, hashedPassword, isAdmin])
 
     return { status: 201, content: 'success' } // maybe update content
 }
