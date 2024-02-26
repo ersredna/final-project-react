@@ -1,7 +1,7 @@
 import express, { response } from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-import { getUser, registerUser, loginUser, getCharacters, addCharacter, addCharactersBulk, deleteCharacter, getConnections, addConnection, deleteConnection, clearTable } from './database.js'
+import { registerUser, loginUser, getCharacters, addCharacter, addCharactersBulk, deleteCharacter, getConnections, addConnection, deleteConnection, clearTable } from './database.js'
 
 const app = express()
 const PORT = 5000
@@ -78,6 +78,13 @@ app.post('/delete-connection', jsonParser, async (req, res) => {
     const response = await deleteConnection(charNameS, charNameT)
 
     res.status(response.status).json(response)
+})
+
+
+app.post('/import-csv', jsonParser, async (req, res) => {                 // currently working here
+    console.log('test', req.body)
+
+    res.status(200).json('test')
 })
 
 

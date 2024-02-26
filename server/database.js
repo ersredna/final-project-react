@@ -13,13 +13,6 @@ const pool = mysql.createPool({
 }).promise()
 
 
-export async function getUser(username) {
-    const [ rows ] = await pool.query("SELECT * FROM users WHERE username = ?", username)
-
-    return rows[0]
-}
-
-
 export async function registerUser(username, password, adminCode) {
     const usernameUpper = username.toUpperCase()
     const [[ existingUser ]] = await pool.query("SELECT * FROM users WHERE username = ?", usernameUpper)

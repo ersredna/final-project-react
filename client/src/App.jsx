@@ -18,7 +18,8 @@ export default class App extends React.Component {
       connInputS: '',
       connInputT: '',
       characters: [],
-      connections: []
+      connections: [],
+      importFile: []
     }
   }
 
@@ -191,6 +192,34 @@ export default class App extends React.Component {
   }
 
 
+  setFile = (e) => {
+    this.setState({ importFile: e.target.files[0] })
+  }
+
+
+  handleUpload = () => {                              // currently working here
+    console.log(this.state.importFile)
+
+    // var data = new FormData()
+    // data.append('file', this.state.importFile)
+    
+    // fetch('http://localhost:5000/import-csv', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: this.state.importFile
+    // })
+    // .then(res => res.json())
+    // .then(data => {
+    //   if (data.error) alert(data.error)
+    // })
+    // .then(() => this.getConnections())
+    // .catch(err => console.error(err))
+  }
+
+
   render() {
     let page = <></>
     if (this.state.user) {
@@ -205,7 +234,7 @@ export default class App extends React.Component {
           <ConnectionsList connInputS={this.state.connInputS} connInputT={this.state.connInputT} connections={this.state.connections} />
         </div>
         <div className="form-div">
-          <CsvInputForm />
+          <CsvInputForm setFile={this.setFile} handleUpload={this.handleUpload} />
         </div>
         <button className="btn">tests</button>
       </div>

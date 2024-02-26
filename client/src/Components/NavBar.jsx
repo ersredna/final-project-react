@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import './NavBar.css'
 
 export default function NavBar({ user, setUser }) {
