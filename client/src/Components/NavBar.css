@@ -19,10 +19,10 @@
 }
 
 .logged-msg {
-    margin-right: 12px;
+    margin: auto 12px auto 0px;
 }
 
-.login-form {
+.login-div {
     height: 50px;
     width: 100%;
     max-width: 500px;

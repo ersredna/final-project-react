@@ -1,7 +1,7 @@
 import express, { response } from 'express'
 import bodyParser from 'body-parser'
 import cors from 'cors'
-import { getUser, registerUser, getCharacters, addCharacter, addCharactersBulk, deleteCharacter, getConnections, addConnection, deleteConnection, clearTable } from './database.js'
+import { getUser, registerUser, loginUser, getCharacters, addCharacter, addCharactersBulk, deleteCharacter, getConnections, addConnection, deleteConnection, clearTable } from './database.js'
 
 const app = express()
 const PORT = 5000
@@ -13,10 +13,19 @@ app.use(cors({
 }))
 
 
-app.post('/register', jsonParser, async (req, res) => {                     // currently working here
+app.post('/register', jsonParser, async (req, res) => {
     const { username, password, adminCode } = req.body
 
     const response = await registerUser(username, password, adminCode)
+
+    res.status(response.status).json(response)
+})
+
+
+app.post('/login', jsonParser, async (req, res) => {
+    const { username, password } = req.body
+
+    const response = await loginUser(username, password)
 
     res.status(response.status).json(response)
 })

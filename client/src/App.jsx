@@ -26,6 +26,8 @@ export default class App extends React.Component {
   componentDidMount() {
     this.getCharacters()
     this.getConnections()
+
+    if (localStorage.user) this.setState({ user: localStorage.user })
   }
 
 
@@ -47,33 +49,9 @@ export default class App extends React.Component {
   }
 
 
-  loginSubmit() {
-    return
-  }
-
-
-  registerUser = (username, password, adminCode) => {               // currently working here
-    // dont know if putting password in variable is ok. probably just go for it
-    if (!username && !password) alert("Must provide username and password")
-    else {
-      if (!username) alert("Must provide username") 
-      if (!password) alert("Must provide password")
-    }
-    if (!username || !password) return
-
-    fetch('http://localhost:5000/register', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ username, password, adminCode })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.error) alert(data.error)
-    })
-    .catch(err => console.error(err))
+  setUser = (user) => {
+    this.setState({ user })
+    localStorage.user = user
   }
 
 
@@ -215,7 +193,7 @@ export default class App extends React.Component {
 
   render() {
     let page = <></>
-    if (false/* if admin */) {
+    if (this.state.user) {
       page = 
       <div className="content-div">
         <div className="form-div">
@@ -249,7 +227,7 @@ export default class App extends React.Component {
 
     return (
       <>
-        <NavBar user={this.state.user} loginSubmit={this.state.loginSubmit} />
+        <NavBar user={this.state.user} setUser={this.setUser} loginSubmit={this.state.loginSubmit} />
         {page}
       </>
     );

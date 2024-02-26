@@ -1,6 +1,6 @@
 import mysql from 'mysql2'
 import bcrypt from 'bcrypt'
-const SALT_ROUNDS = 10
+const SALT_ROUNDS = 11
 
 import dotenv from 'dotenv'
 dotenv.config()
@@ -20,7 +20,7 @@ export async function getUser(username) {
 }
 
 
-export async function registerUser(username, password, adminCode) {                          // currently working here
+export async function registerUser(username, password, adminCode) {
     const usernameUpper = username.toUpperCase()
     const [[ existingUser ]] = await pool.query("SELECT * FROM users WHERE username = ?", usernameUpper)
 
@@ -29,11 +29,21 @@ export async function registerUser(username, password, adminCode) {             
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
     const isAdmin = adminCode = process.env.ADMIN_HASH ? 1 : 0
 
-    console.log(usernameUpper, hashedPassword, isAdmin)
-
     await pool.query("INSERT INTO users (username, hash, is_admin) VALUES (?, ?, ?)", [usernameUpper, hashedPassword, isAdmin])
 
-    return { status: 201, content: 'success' } // maybe update content
+    return { status: 201, content: username }
+}
+
+
+export async function loginUser(username, password) {
+    const usernameUpper = username.toUpperCase()
+
+    const [[ hash ]] = await pool.query("SELECT hash FROM users WHERE username = ?", usernameUpper)
+
+    if (!hash) return { status: 200, error: 'Username or password is incorrect'}
+    if (!await bcrypt.compare(password, hash.hash)) return { status: 200, error: 'Username or password is incorrect'}
+
+    return { status: 200, content: username }
 }
 
 

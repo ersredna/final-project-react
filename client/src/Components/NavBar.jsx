@@ -1,28 +1,25 @@
+import { useEffect, useState } from 'react'
 import './NavBar.css'
 
-export default function NavBar({ user }) {
-    let userLogged
-    let btnMessage = 'Login'
-    if (user) {
-        userLogged = <p className="d-inline-block logged-msg nav-item">Logged in as <strong>{user}</strong></p>
-        btnMessage = 'Logout'
-    }
-    else {
-        userLogged = ''
-        btnMessage = 'Login'
-    }
+export default function NavBar({ user, setUser }) {
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
+    const [adminCode, setAdminCode] = useState('')
 
-    let submitType = 'login'
-    function loginUser(e) {                // currently working here              move this function to app.jsx
-        e.preventDefault()
-        console.log(submitType)
 
-        if (!e.target.username.value && !e.target.password.value) alert("Must provide username and password")
-        else {
-            if (!e.target.username.value) alert("Must provide username") 
-            if (!e.target.password.value) alert("Must provide password")
+
+    async function loginUser(submitType) {
+        if (submitType === 'logout') {
+            setUser('')
+            return
         }
-        if (!e.target.username.value || !e.target.password.value) return
+
+        if (!username && !password) alert("Must provide username and password")
+        else {
+            if (!username) alert("Must provide username") 
+            if (!password) alert("Must provide password")
+        }
+        if (!username || !password) return
 
         if (submitType === 'register') {
             fetch('http://localhost:5000/register', {
@@ -31,56 +28,56 @@ export default function NavBar({ user }) {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ username: e.target.username.value, password: e.target.password.value, adminCode: e.target.adminCode.value })
+                body: JSON.stringify({ username, password, adminCode })
             })
             .then(res => res.json())
             .then(data => {
                 if (data.error) alert(data.error)
+                else setUser(data.content)
             })
             .catch(err => console.error(err))
         }
-        else if (submitType === 'login') {                    // finish login path
+        else if (submitType === 'login') {
             fetch('http://localhost:5000/login', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ username: e.target.username.value, password: e.target.password.value })
+                body: JSON.stringify({ username: username, password: password })
             })
             .then(res => res.json())
             .then(data => {
                 if (data.error) alert(data.error)
+                else setUser(data.content)
             })
             .catch(err => console.error(err))
         }
         else return
-        
-        // localStorage.user = user ? user : ''
-    }
-
-
-    function changeSubmitType(e) {
-        submitType = e.target.name
     }
 
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <a className="navbar-brand" href="#">One Piece Connections</a>
-            <form className="login-form nav-item" id="login-form" onSubmit={loginUser}>
+            <div className="login-div nav-item" id="login-form">
                 {!user && 
                     <>
-                        <button className="btn d-inline-block login-btn" name='register' id='register-btn' onClick={changeSubmitType}>Register</button>
-                        <input className="d-inline-block form-control admin-code-input" id="adminCode" placeholder="Admin Code" type="password"></input>
+                        <button className="btn d-inline-block login-btn" name='register' id='register-btn' onClick={e => loginUser(e.target.name)}>Register</button>
+                        <input className="d-inline-block form-control admin-code-input" id="admin-code" onChange={e => setAdminCode(e.target.value)} placeholder="Admin Code" value={adminCode} type="password"></input>
                         <div className="login-input-wrapper">
-                            <input className="d-inline-block form-control login-input" id="username" placeholder="Username" type="text"></input>
-                            <input className="d-inline-block form-control login-input" id="password" placeholder="Password" type="password"></input>
+                            <input className="d-inline-block form-control login-input" onChange={e => setUsername(e.target.value)} id="username" placeholder="Username" value={username} type="text"></input>
+                            <input className="d-inline-block form-control login-input" onChange={e => setPassword(e.target.value)} id="password" placeholder="Password" value={password} type="password"></input>
                         </div>
+                        <button className="btn d-inline-block login-btn" name='login' id='login-btn' onClick={e => loginUser(e.target.name)}>Login</button>
                     </>
                 }
-                {userLogged}
-                <button className="btn d-inline-block login-btn" name='login' id='login-btn' onClick={changeSubmitType}>{btnMessage}</button>
-            </form>
+                {user && 
+                    <>
+                        <p className="d-inline-block logged-msg nav-item">Logged in as <strong>{user}</strong></p>
+                        <button className="btn d-inline-block login-btn" name='logout' id='logout-btn' onClick={e => loginUser(e.target.name)}>Logout</button>
+                    </>
+                }
+            </div>
         </nav>
     )
 }
