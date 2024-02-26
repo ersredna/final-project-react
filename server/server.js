@@ -1,12 +1,28 @@
 import express, { response } from 'express'
 import bodyParser from 'body-parser'
+import csv from 'csv-parser'
+import fs from 'fs'
+import multer from 'multer'
 import cors from 'cors'
-import { registerUser, loginUser, getCharacters, addCharacter, addCharactersBulk, deleteCharacter, getConnections, addConnection, deleteConnection, clearTable } from './database.js'
+import { registerUser, loginUser, getCharacters, addCharacter, addCharactersBulk, deleteCharacter, getConnections, addConnection, deleteConnection, importCharacters, clearTable } from './database.js'
+import { on } from 'events'
+import { resourceLimits } from 'worker_threads'
 
 const app = express()
 const PORT = 5000
 
 const jsonParser = bodyParser.json()
+
+const storage = multer.diskStorage({
+    destination: function(req, file, callback) {
+        callback(null, './uploads')
+    },
+    filename: function(req, file, callback) {
+        callback(null, 'imports.csv')
+    }
+})
+
+const upload = multer({ storage })
 
 app.use(cors({
     origin: 'http://localhost:5173'
@@ -81,10 +97,25 @@ app.post('/delete-connection', jsonParser, async (req, res) => {
 })
 
 
-app.post('/import-csv', jsonParser, async (req, res) => {                 // currently working here
-    console.log('test', req.body)
+app.post('/import-csv', upload.single('import-csv'), async (req, res) => {
+    if (!new RegExp('\.(csv|CSV)$').test(req.file.originalname)) {
+        res.status(200).json({ status: 200, error: 'Incorrect file type' })
+        return
+    }
+    
+    const results = []
 
-    res.status(200).json('test')
+    fs.createReadStream(req.file.destination + '/' + req.file.filename)
+    .pipe(csv({}))
+    .on('error', err => {
+        console.error(err)
+        res.status(200).json({ status: 200, error: 'Error reading file'})
+    })
+    .on('data', data => results.push(data))
+    .on('end', async () => {
+        const response = await importCharacters(results)
+        res.status(response.status).json(response)
+    })
 })
 
 

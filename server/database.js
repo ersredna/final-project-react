@@ -41,7 +41,7 @@ export async function loginUser(username, password) {
 
 
 export async function getCharacters() {
-    const [ characters ] = await pool.query("SELECT * FROM characters")
+    const [ characters ] = await pool.query("SELECT * FROM characters ORDER BY id ASC")
 
     if (!characters.length) return { status: 200, error: 'No characters in database' }
 
@@ -133,6 +133,24 @@ export async function deleteConnection(charNameS, charNameT) {
     await pool.query("DELETE FROM connections WHERE char_id_1 = ? AND char_id_2 = ?", [source.id, target.id])
 
     return { status: 200, content: connection }
+}
+
+
+export async function importCharacters(characters) {
+    let added = []
+
+    for (const character of characters) {
+        const name = character.name.toUpperCase()
+        const [[ existingCharacter ]] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
+
+        if (existingCharacter) continue
+
+        pool.query("INSERT INTO characters (name) VALUES (?)", name)
+
+        added.push(name)
+    }
+
+    return { status: 201, content: JSON.stringify(added) }
 }
 
 
