@@ -5,8 +5,6 @@ import fs from 'fs'
 import multer from 'multer'
 import cors from 'cors'
 import { registerUser, loginUser, getCharacters, addCharacter, addCharactersBulk, deleteCharacter, getConnections, addConnection, deleteConnection, importCharacters, clearTable } from './database.js'
-import { on } from 'events'
-import { resourceLimits } from 'worker_threads'
 
 const app = express()
 const PORT = 5000
@@ -116,6 +114,33 @@ app.post('/import-csv', upload.single('import-csv'), async (req, res) => {
         const response = await importCharacters(results)
         res.status(response.status).json(response)
     })
+
+    // TODO: delete file after
+})
+
+
+app.get('/export-csv', async (req, res) => {
+    const response = await getConnections()
+    if (response.error) res.status(response.status).json(response)
+
+    let connectionsData = 'source,target\r\n'
+
+    for (const connection of response.content) {
+        connectionsData += connection.source + ',' + connection.target + '\r\n'
+    }
+
+    fs.writeFileSync('./exports/connections.csv', connectionsData, err => {
+        if (err) console.error(err)
+    })
+
+    res.status(200).download('exports/connections.csv', 'connections.csv', err => {
+        if (err) {
+            console.error(err)
+            res.status(200).json({ status: 200, error: 'Could not download file'})
+        }
+    })
+
+    // TODO: delete file after
 })
 
 
