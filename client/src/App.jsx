@@ -1,10 +1,12 @@
 import React, { setState } from 'react'
+
 import NavBar from './Components/NavBar'
 import CharactersList from './Components/CharactersList'
 import CharactersAlterForm from './Components/CharactersAlterForm'
 import CharacterConnectionsAlterForm from './Components/CharacterConnectionsAlterForm'
 import ConnectionsList from './Components/ConnectionsList'
 import CsvInputForm from './Components/CsvInputForm'
+import CsvExportForm from './Components/CsvExportForm'
 
 import './App.css'
 
@@ -197,26 +199,27 @@ export default class App extends React.Component {
   }
 
 
-  handleUpload = () => {                              // currently working here
-    console.log(this.state.importFile)
-
-    // var data = new FormData()
-    // data.append('file', this.state.importFile)
+  handleUpload = () => {
+    const data = new FormData()
+    data.append('import-csv', this.state.importFile)
     
-    // fetch('http://localhost:5000/import-csv', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: this.state.importFile
-    // })
-    // .then(res => res.json())
-    // .then(data => {
-    //   if (data.error) alert(data.error)
-    // })
-    // .then(() => this.getConnections())
-    // .catch(err => console.error(err))
+    fetch('http://localhost:5000/import-csv', {
+      method: 'POST',
+      body: data
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) alert(data.error)
+    })
+    .then(() => this.getCharacters())
+    .catch(err => console.error(err))
+
+    document.getElementById('csv-file-input').value = ''
+  }
+
+
+  handleExport() {
+    window.open('http://localhost:5000/export-csv', '_blank').focus()
   }
 
 
@@ -226,6 +229,9 @@ export default class App extends React.Component {
       page = 
       <div className="content-div">
         <div className="form-div">
+          <div className="header-div">
+            <div>Add or remove Characters:</div>
+          </div>
           <CharactersAlterForm charInput={this.state.charInput} onChange={this.onChange} addCharacter={this.addCharacter} deleteCharacter={this.deleteCharacter} />
           <CharactersList characters={this.state.characters} />
         </div>
@@ -235,6 +241,7 @@ export default class App extends React.Component {
         </div>
         <div className="form-div">
           <CsvInputForm setFile={this.setFile} handleUpload={this.handleUpload} />
+          <CsvExportForm handleExport={this.handleExport} />
         </div>
         <button className="btn">tests</button>
       </div>

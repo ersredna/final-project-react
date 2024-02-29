@@ -96,6 +96,11 @@ app.post('/delete-connection', jsonParser, async (req, res) => {
 
 
 app.post('/import-csv', upload.single('import-csv'), async (req, res) => {
+    if (!req.file) {
+        res.status(200).json({ status: 200, error: 'Must select file'})
+        return
+    }
+    
     if (!new RegExp('\.(csv|CSV)$').test(req.file.originalname)) {
         res.status(200).json({ status: 200, error: 'Incorrect file type' })
         return
@@ -103,7 +108,7 @@ app.post('/import-csv', upload.single('import-csv'), async (req, res) => {
     
     const results = []
 
-    fs.createReadStream(req.file.destination + '/' + req.file.filename)
+    fs.createReadStream(req.file.destination + '/' + req.file.filename)   // error here
     .pipe(csv({}))
     .on('error', err => {
         console.error(err)
@@ -113,9 +118,13 @@ app.post('/import-csv', upload.single('import-csv'), async (req, res) => {
     .on('end', async () => {
         const response = await importCharacters(results)
         res.status(response.status).json(response)
-    })
 
-    // TODO: delete file after
+        if (fs.existsSync('./uploads/imports.csv')) {
+            fs.unlink('./uploads/imports.csv', err => {
+                if (err) console.error(err)
+            })
+        }
+    })
 })
 
 
@@ -140,7 +149,13 @@ app.get('/export-csv', async (req, res) => {
         }
     })
 
-    // TODO: delete file after
+    if (fs.existsSync('./exports/connections.csv')) {
+        console.log('exists')
+        fs.unlink('./exports/connections.csv', err => {
+            if (err) console.error(err)
+            console.log('removed')
+        })
+    }
 })
 
 
