@@ -7,24 +7,22 @@
 
 .form-div {
     width: 250px;
-    height: calc(100vh - 70px);
-    margin: 0 5px 0 0;
+    height: calc(100vh - 110px);
+    margin: 0 10px 0 0;
 }
 
 .header-div {
     width: 100%;
     height: 40px;
     margin: 0 0 5px 0;
-    padding: 0;
-    border: 1px solid red;
+    padding: 6px 0 0 0;
+    border-bottom: 2px solid grey;
 }
 
-.header-div > div {
+.header-div > h3 {
+    font-size: 1.15rem;
     max-width: 100%;
-    margin: 12px 0 0 0;
     text-align: center;
-    border: 1px solid blue;
-    /* border-bottom: 2px solid black; */
 }
 
 .character-form-div {
@@ -46,7 +44,7 @@
 }
 
 .characters-table-wrapper-scroll-y {
-    height: calc(100% - 141px);
+    height: calc(100% - 181px);
     margin: 0;
     overflow-y: auto;
 }
@@ -78,7 +76,7 @@
 }
 
 .connections-table-wrapper-scroll-y {
-    height: calc(100% - 186px);
+    height: calc(100% - 226px);
     margin: 0;
     overflow-y: auto;
 }

@@ -20,11 +20,11 @@ export async function registerUser(username, password, adminCode) {
     if (existingUser) return { status: 200, error: `Username "${username}" already in use`}
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS)
-    const isAdmin = adminCode = process.env.ADMIN_HASH ? 1 : 0
+    const isAdmin = adminCode === process.env.ADMIN_HASH ? 1 : 0
 
     await pool.query("INSERT INTO users (username, hash, is_admin) VALUES (?, ?, ?)", [usernameUpper, hashedPassword, isAdmin])
 
-    return { status: 201, content: username }
+    return { status: 201, content: { username, isAdmin: isAdmin === 1 ? true : false } }
 }
 
 
@@ -36,7 +36,9 @@ export async function loginUser(username, password) {
     if (!hash) return { status: 200, error: 'Username or password is incorrect'}
     if (!await bcrypt.compare(password, hash.hash)) return { status: 200, error: 'Username or password is incorrect'}
 
-    return { status: 200, content: username }
+    const [[ isAdmin ]] = await pool.query("SELECT is_admin FROM users WHERE username = ?", usernameUpper)
+
+    return { status: 200, content: { username, isAdmin: isAdmin.is_admin.readInt8() === 1 ? true : false } }
 }
 
 
@@ -145,9 +147,11 @@ export async function importCharacters(characters) {
 
         if (existingCharacter) continue
 
-        pool.query("INSERT INTO characters (name) VALUES (?)", name)
+        await pool.query("INSERT INTO characters (name) VALUES (?)", name)
 
-        added.push(name)
+        const [[ id ]] = await pool.query("SELECT id FROM characters WHERE name = ?", name)
+
+        added.push({ id: id.id, name })
     }
 
     return { status: 201, content: JSON.stringify(added) }

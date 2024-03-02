@@ -16,6 +16,7 @@ export default class App extends React.Component {
 
     this.state = {
       user: '',
+      isAdmin: false,
       charInput: '',
       connInputS: '',
       connInputT: '',
@@ -27,10 +28,10 @@ export default class App extends React.Component {
 
 
   componentDidMount() {
+    this.setState({ user: localStorage.user, isAdmin: localStorage.isAdmin })
+
     this.getCharacters()
     this.getConnections()
-
-    if (localStorage.user) this.setState({ user: localStorage.user })
   }
 
 
@@ -52,9 +53,11 @@ export default class App extends React.Component {
   }
 
 
-  setUser = (user) => {
-    this.setState({ user })
-    localStorage.user = user
+  setUser = (user, isAdmin = false) => {
+    this.setState({ user, isAdmin }, () => {
+      localStorage.user = user
+      localStorage.isAdmin = isAdmin
+    })
   }
 
 
@@ -89,7 +92,6 @@ export default class App extends React.Component {
       if (data.error) alert(data.error)
     })
     .then(() => this.getCharacters())
-    .then(() => this.getConnections())
     .catch(err => console.error(err))
 
     this.setState({ charInput: '' })
@@ -225,38 +227,46 @@ export default class App extends React.Component {
 
   render() {
     let page = <></>
-    if (this.state.user) {
+    if (this.state.user && this.state.isAdmin) {
       page = 
       <div className="content-div">
         <div className="form-div">
           <div className="header-div">
-            <div>Add or remove Characters:</div>
+            <h3>Add or Remove Characters</h3>
           </div>
           <CharactersAlterForm charInput={this.state.charInput} onChange={this.onChange} addCharacter={this.addCharacter} deleteCharacter={this.deleteCharacter} />
           <CharactersList characters={this.state.characters} />
         </div>
         <div className="form-div">
+          <div className="header-div">
+            <h3>Add or Remove Connections</h3>
+          </div>
           <CharacterConnectionsAlterForm connInputS={this.state.connInputS} connInputT={this.state.connInputT} onChange={this.onChange} addConnection={this.addConnection} deleteConnection={this.deleteConnection} />
           <ConnectionsList connInputS={this.state.connInputS} connInputT={this.state.connInputT} connections={this.state.connections} />
         </div>
         <div className="form-div">
+          <div className="header-div">
+            <h3>Import Characters as .csv</h3>
+          </div>
           <CsvInputForm setFile={this.setFile} handleUpload={this.handleUpload} />
+          <div className="header-div">
+            <h3>Download connections as .csv</h3>
+          </div>
           <CsvExportForm handleExport={this.handleExport} />
         </div>
-        <button className="btn">tests</button>
       </div>
     }
-    else if (!this.state.user/* if user, no admin */) {
+    else if (this.state.user) {
       page =
       <div>
-        Hello there.
+        Hello there. If you're part of the project, ask Rhys about an admin code.
       </div>
     }
     // if no user
     else {
       page =
       <div>
-        test
+        This app is for a school project.
       </div>
     }
 

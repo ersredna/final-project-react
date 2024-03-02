@@ -7,9 +7,10 @@ export default function NavBar({ user, setUser }) {
     const [adminCode, setAdminCode] = useState('')
 
 
-
     async function loginUser(submitType) {
         if (submitType === 'logout') {
+            setUsername('')
+            setPassword('')
             setUser('')
             return
         }
@@ -33,7 +34,7 @@ export default function NavBar({ user, setUser }) {
             .then(res => res.json())
             .then(data => {
                 if (data.error) alert(data.error)
-                else setUser(data.content)
+                else setUser(data.content.username, data.content.isAdmin)
             })
             .catch(err => console.error(err))
         }
@@ -49,7 +50,7 @@ export default function NavBar({ user, setUser }) {
             .then(res => res.json())
             .then(data => {
                 if (data.error) alert(data.error)
-                else setUser(data.content)
+                else setUser(data.content.username, data.content.isAdmin)
             })
             .catch(err => console.error(err))
         }

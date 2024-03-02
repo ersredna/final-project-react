@@ -108,7 +108,7 @@ app.post('/import-csv', upload.single('import-csv'), async (req, res) => {
     
     const results = []
 
-    fs.createReadStream(req.file.destination + '/' + req.file.filename)   // error here
+    fs.createReadStream(req.file.destination + '/' + req.file.filename)
     .pipe(csv({}))
     .on('error', err => {
         console.error(err)
