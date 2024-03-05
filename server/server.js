@@ -7,7 +7,7 @@ import cors from 'cors'
 import { registerUser, loginUser, getCharacters, addCharacter, addCharactersBulk, deleteCharacter, getConnections, addConnection, deleteConnection, importCharacters, clearTable } from './database.js'
 
 const app = express()
-const PORT = 5000
+const PORT = process.env.PORT || 5000
 
 const jsonParser = bodyParser.json()
 
