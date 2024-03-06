@@ -6,10 +6,11 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const pool = mysql.createPool({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE
+    host: process.env.RDS_HOSTNAME || process.env.MYSQL_HOST,
+    user: process.env.RDS_USERNAME || process.env.MYSQL_USER,
+    password: process.env.RDS_PASSWORD || process.env.MYSQL_PASSWORD,
+    database: process.env.RDS_DB_NAME || process.env.MYSQL_DATABASE,
+    ssl: process.env.DB_SSL ? { rejectUnauthorized: false } : false
 }).promise()
 
 
@@ -63,11 +64,6 @@ export async function addCharacter(name) {
     const [[ character ]] = await pool.query("SELECT * FROM characters WHERE name = ?", name)
 
     return { status: 201, content: character }
-}
-
-
-export async function addCharactersBulk(characters) {
-    return
 }
 
 

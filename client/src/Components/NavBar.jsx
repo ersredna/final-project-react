@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import './NavBar.css'
 
+const ROUTE = 'http://one-piece-connections.s3-website-us-west-2.amazonaws.com/'
+
 export default function NavBar({ user, setUser }) {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -23,7 +25,7 @@ export default function NavBar({ user, setUser }) {
         if (!username || !password) return
 
         if (submitType === 'register') {
-            fetch('http://localhost:5000/register', {
+            fetch(ROUTE + 'register', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -39,7 +41,7 @@ export default function NavBar({ user, setUser }) {
             .catch(err => console.error(err))
         }
         else if (submitType === 'login') {
-            fetch('http://localhost:5000/login', {
+            fetch(ROUTE + 'login', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

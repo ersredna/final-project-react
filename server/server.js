@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage })
 
 app.use(cors({
-    origin: 'http://localhost:5173'
+    origin: 'http://one-piece-connections.s3-website-us-west-2.amazonaws.com'
 }))
 
 

@@ -10,6 +10,8 @@ import CsvExportForm from './Components/CsvExportForm'
 
 import './App.css'
 
+const ROUTE = 'http://one-piece-connections.s3-website-us-west-2.amazonaws.com/'
+
 export default class App extends React.Component {
   constructor(props) {
     super(props)
@@ -62,7 +64,7 @@ export default class App extends React.Component {
 
 
   async getCharacters() {
-    const response = await fetch('http://localhost:5000/characters')
+    const response = await fetch(ROUTE + 'characters')
     .then(res => {
       return res.json()
     })
@@ -79,7 +81,7 @@ export default class App extends React.Component {
       return
     }
 
-    fetch('http://localhost:5000/add-character', {
+    fetch(ROUTE + 'add-character', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -105,7 +107,7 @@ export default class App extends React.Component {
       return
     }
 
-    fetch('http://localhost:5000/delete-character', {
+    fetch(ROUTE + 'delete-character', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -126,7 +128,7 @@ export default class App extends React.Component {
 
 
   async getConnections() {
-    const response = await fetch('http://localhost:5000/connections')
+    const response = await fetch(ROUTE + 'connections')
     .then(res => {
       return res.json()
     })
@@ -147,7 +149,7 @@ export default class App extends React.Component {
     }
     if (!charNameS || !charNameT) return
 
-    fetch('http://localhost:5000/add-connection', {
+    fetch(ROUTE + 'add-connection', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -177,7 +179,7 @@ export default class App extends React.Component {
     }
     if (!charNameS || !charNameT) return
 
-    fetch('http://localhost:5000/delete-connection', {
+    fetch(ROUTE + 'delete-connection', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -205,7 +207,7 @@ export default class App extends React.Component {
     const data = new FormData()
     data.append('import-csv', this.state.importFile)
     
-    fetch('http://localhost:5000/import-csv', {
+    fetch(ROUTE + 'import-csv', {
       method: 'POST',
       body: data
     })
@@ -221,7 +223,7 @@ export default class App extends React.Component {
 
 
   handleExport() {
-    window.open('http://localhost:5000/export-csv', '_blank').focus()
+    window.open(ROUTE + 'export-csv', '_blank').focus()
   }
 
 
