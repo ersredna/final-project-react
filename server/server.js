@@ -4,7 +4,7 @@ import csv from 'csv-parser'
 import fs from 'fs'
 import multer from 'multer'
 import cors from 'cors'
-import { registerUser, loginUser, getCharacters, addCharacter, addCharactersBulk, deleteCharacter, getConnections, addConnection, deleteConnection, importCharacters, clearTable } from './database.js'
+import { registerUser, loginUser, getCharacters, addCharacter, deleteCharacter, getConnections, addConnection, deleteConnection, importCharacters, clearTable } from './database.js'
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -23,7 +23,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage })
 
 app.use(cors({
-    origin: 'http://one-piece-connections.s3-website-us-west-2.amazonaws.com'
+    // origin: 'http://one-piece-connections-client.s3-website-us-west-2.amazonaws.com'
+    origin: 'http://localhost:5173'
 }))
 
 

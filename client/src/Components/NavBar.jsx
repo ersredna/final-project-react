@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import './NavBar.css'
 
-const ROUTE = 'http://one-piece-connections.s3-website-us-west-2.amazonaws.com/'
+const ROUTE = 'http://opcapi.us-west-2.elasticbeanstalk.com/'
+// const ROUTE = 'http://localhost:5000/'
 
 export default function NavBar({ user, setUser }) {
     const [username, setUsername] = useState('')
