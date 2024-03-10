@@ -1,5 +1,5 @@
 export default function ConnectionsList({ connInputS, connInputT, connections }) {
-    let filteredConn = [{ source: 'error loading', target: 'error loading'}]
+    let filteredConn = [{ source: 'No Connections', target: 'No connections'}]
     
     if (connections) {   
         const reS = new RegExp(connInputS, 'i')
